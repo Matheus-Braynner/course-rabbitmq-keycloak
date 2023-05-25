@@ -1,10 +1,9 @@
 package io.github.matheusbraynner.msavaliadorcredito.application;
 
-import io.github.matheusbraynner.msavaliadorcredito.domain.model.DadosAvaliacao;
-import io.github.matheusbraynner.msavaliadorcredito.domain.model.RetornoAvaliacaoCliente;
-import io.github.matheusbraynner.msavaliadorcredito.domain.model.SituacaoCliente;
+import io.github.matheusbraynner.msavaliadorcredito.domain.model.*;
 import io.github.matheusbraynner.msavaliadorcredito.ex.DadosClienteNotFoundException;
 import io.github.matheusbraynner.msavaliadorcredito.ex.ErroComunicacaoMicroservicesException;
+import io.github.matheusbraynner.msavaliadorcredito.ex.ErroSolicitacaoCartaoException;
 import io.github.matheusbraynner.msavaliadorcredito.service.AvaliadorCreditoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +44,16 @@ public class AvaliadorCreditoController {
             return ResponseEntity.notFound().build();
         } catch (ErroComunicacaoMicroservicesException e) {
             return ResponseEntity.status(HttpStatus.resolve(e.getStatus())).body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/solicitacoes-cartao")
+    public ResponseEntity solicitarCartao(@RequestBody DadosSolicitacaoEmissaoCartao dados) {
+        try {
+            ProtocoloSolicitacaoCartao protocoloSolicitacaoCartao = avaliadorCreditoService.solicitarEmissaoCartao(dados);
+            return ResponseEntity.ok(protocoloSolicitacaoCartao);
+        } catch (ErroSolicitacaoCartaoException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 }

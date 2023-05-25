@@ -1,16 +1,16 @@
 package io.github.matheusbraynner.msavaliadorcredito.service;
 
 import feign.FeignException;
-import io.github.matheusbraynner.msavaliadorcredito.domain.model.CartaoAprovado;
-import io.github.matheusbraynner.msavaliadorcredito.domain.model.RetornoAvaliacaoCliente;
-import io.github.matheusbraynner.msavaliadorcredito.domain.model.SituacaoCliente;
+import io.github.matheusbraynner.msavaliadorcredito.domain.model.*;
 import io.github.matheusbraynner.msavaliadorcredito.domain.model.feign.Cartao;
 import io.github.matheusbraynner.msavaliadorcredito.domain.model.feign.CartaoCliente;
 import io.github.matheusbraynner.msavaliadorcredito.domain.model.feign.DadosCliente;
 import io.github.matheusbraynner.msavaliadorcredito.ex.DadosClienteNotFoundException;
 import io.github.matheusbraynner.msavaliadorcredito.ex.ErroComunicacaoMicroservicesException;
+import io.github.matheusbraynner.msavaliadorcredito.ex.ErroSolicitacaoCartaoException;
 import io.github.matheusbraynner.msavaliadorcredito.infra.clients.CartoesResourceClient;
 import io.github.matheusbraynner.msavaliadorcredito.infra.clients.ClienteResourceClient;
+import io.github.matheusbraynner.msavaliadorcredito.infra.mqueue.SolicitacaoEmissaoCartaoPublisher;
 import org.apache.el.lang.ELArithmetic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +30,9 @@ public class AvaliadorCreditoService {
 
     @Autowired
     private CartoesResourceClient cartoesClient;
+
+    @Autowired
+    private SolicitacaoEmissaoCartaoPublisher emissaoCartaoPublisher;
 
 //    @Autowired
 //    private AvaliadorCreditoRepository repository;
@@ -80,6 +84,16 @@ public class AvaliadorCreditoService {
                 throw new DadosClienteNotFoundException();
             }
             throw new ErroComunicacaoMicroservicesException(e.getLocalizedMessage(), status);
+        }
+    }
+
+    public ProtocoloSolicitacaoCartao solicitarEmissaoCartao(DadosSolicitacaoEmissaoCartao dados) {
+        try {
+            emissaoCartaoPublisher.SolicitarCartao(dados);
+            var protocolo = UUID.randomUUID().toString();
+            return new ProtocoloSolicitacaoCartao(protocolo);
+        } catch (Exception e) {
+            throw new ErroSolicitacaoCartaoException(e.getMessage());
         }
     }
 }
