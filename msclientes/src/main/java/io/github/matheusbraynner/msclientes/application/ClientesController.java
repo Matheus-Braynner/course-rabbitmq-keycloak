@@ -3,6 +3,7 @@ package io.github.matheusbraynner.msclientes.application;
 import io.github.matheusbraynner.msclientes.application.dto.ClienteSaveRequest;
 import io.github.matheusbraynner.msclientes.domain.Cliente;
 import io.github.matheusbraynner.msclientes.service.ClienteService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/clientes")
+@Slf4j
 public class ClientesController {
 
     @Autowired
@@ -20,6 +22,7 @@ public class ClientesController {
 
     @GetMapping
     public String status() {
+        log.info("Obtendo o status do microservice de clientes");
         return "ok";
     }
 

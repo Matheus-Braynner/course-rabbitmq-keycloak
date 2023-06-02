@@ -5,9 +5,8 @@ spring:
     basic:
       enabled: true
     user:
-      name: curso-eureka-user
-      password: ecok-usr-eeuramssur
-
+      name: project-matheus-microservices
+      password: ms-suehtam-eer
 server:
   port: 8761
 

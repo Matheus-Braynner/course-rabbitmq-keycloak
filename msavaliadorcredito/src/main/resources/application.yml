@@ -9,17 +9,16 @@ spring:
 mq:
   queues:
     emissao-cartoes: emissao-cartoes
-
-
 server:
   port: 0
 
 eureka:
   client:
     service-url:
-      default-zone: http://localhost:8761/eureka
+      defaultZone: http://project-matheus-microservices:ms-suehtam-eer@localhost:8761/eureka
+      register-with-eureka: true
+      fetch-registry: true
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
 
 
