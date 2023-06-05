@@ -6,6 +6,7 @@ RUN mvn clean package -DskipTests
 FROM openjdk:17
 WORKDIR /APP
 COPY --from=build ./app/target/*.jar ./app.jar
-ARG RABBITMQ_SERVER=rabbitmq-host
 ARG EUREKA_SERVER=localhost
+ARG KEYCLOAK_SERVER=localhost
+ARG KEYCLOAK_PORT=8081
 ENTRYPOINT java -jar -Dspring.profiles.active=prod app.jar

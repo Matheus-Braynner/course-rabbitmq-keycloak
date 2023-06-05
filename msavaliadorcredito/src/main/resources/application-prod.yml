@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: msavaliadorcredito
+  profiles:
+    active: prod
+  rabbitmq:
+    password: guest
+    port: 5672
+    host: ${RABBITMQ_SERVER}
+    username: guest
+mq:
+  queues:
+    emissao-cartoes: emissao-cartoes
+server:
+  port: 0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://project-matheus-microservices:ms-suehtam-eer@${EUREKA_SERVER}:8761/eureka
+      register-with-eureka: true
+      fetch-registry: true
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+logging:
+  file:
+    name: ./logs/log-file.log
+
